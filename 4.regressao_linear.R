@@ -1,0 +1,17 @@
+regressao_linear <- function(df, target_var, ART){
+  
+  
+  prep_data <- dataprep(df, target_var, ART)
+  
+  yin  <- prep_data$Yin
+  Xin  <- prep_data$Xin
+  Xout <- prep_data$Xout
+  
+  modelo <- lm(yin ~ ., data=Xin)
+  
+  previsao <- predict(modelo, newdata = Xout)
+  
+  
+    resultados <-  return(previsao)
+  
+}
