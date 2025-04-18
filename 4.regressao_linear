@@ -1,15 +1,20 @@
-regressao_linear <- function(df, target_var, independents_var){
+regressao_linear <- function(df, target_var, ART){
   
   
-  prep_data <- data_prep(df, target_var, independents_var, ART=2, horizon=1)
+  prep_data <- dataprep(df, target_var, ART)
   
-  yin  <- prep_data$yin
-  Xin  <- as.data.frame(prep_data$Xin)
-  Xout <- as.data.frame(prep_data$Xout)
+  yin  <- prep_data$Yin
+  Xin  <- prep_data$Xin
+  Xout <- prep_data$Xout
   
-  colnames(Xin) <- colnames(Xout) <- paste0("V", seq_len(ncol(Xin)))
+  modelo <- lm(yin ~ ., data=Xin)
   
-  modelo <- lm(yin ~ ., data = Xin)
+  previsao <- predict(modelo, newdata = Xout)
+  
+  
+    resultados <-  return(previsao)
+  
+}
   previsao <- predict(modelo, newdata = Xout)
   
   
