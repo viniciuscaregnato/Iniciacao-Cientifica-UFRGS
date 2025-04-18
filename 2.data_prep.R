@@ -1,36 +1,24 @@
-data_prep <- function(df, target_var, independents_var, ART=2, horizon=1) {
+dataprep <- function(df, target_var, ART) {
   
-  require(dplyr)
+  # df: janela recebida de rolling window
+  # target_var: variável dependente
+  # ART: quantidade de defasagens (autoregressive terms)
   
-  # df: janela recebida de rolling_window
-  # target_var: variavel alvo
-  # independents_var: variavel dependente
-  # AutoRegressive Terms: numero de defasagens incluidas no modelo
+  y_art <- embed(df[[target_var]], ART)
+  df_trimmed <- df[ART:nrow(df), ]
   
-  for (i in seq_len(ART)) {
-    lag_name <- paste0(target_var, "_lag", i)
-    df[[lag_name]] <- dplyr::lag(df[[target_var]], n = i)
-  }
+  # cria colunas de defasagens com nomes claros
+  colnames(y_art) <- paste0(target_var, "_t-", 1:ART)
   
+  # remove coluna target_var de df_trimmed para montar Xin/Xout
+  X_all <- df_trimmed[, setdiff(names(df_trimmed), target_var)]
   
-  features <- c(independents_var,
-                paste0(target_var, "_lag", seq_len(ART)))
+  # junta defasagens com as demais variáveis independentes
+  X_full <- cbind(X_all, y_art)
   
-  df[[paste0(target_var, "_lead")]] <- dplyr::lead(df[[target_var]], n = horizon)
+  Xin  <- X_full[1:(nrow(X_full) - 1), ]
+  Xout <- X_full[nrow(X_full), , drop = FALSE]
+  Yin  <- df_trimmed[[target_var]][2:nrow(df_trimmed)]  # target deslocado
   
-  df_clean <- df %>%
-    filter(if_all(all_of(features), ~ !is.na(.x)),
-           !is.na(.data[[paste0(target_var, "_lead")]]))
-  
-  Xin  <- as.matrix(df_clean[, features])
-  yin  <- df_clean[[paste0(target_var, "_lead")]]
-  Xout <- tail(Xin, n = horizon)            
-  Yin_out <- tail(df_clean[[target_var]], horizon)
-  
-  return(list(
-    Xin       = Xin,        # preditoras in-sample
-    yin       = yin,        # target in-sample (lead de Y)
-    Xout      = Xout,       # preditoras out-of-sample
-    Yout_real = Yin_out     # valor real para comparaçao
-  ))
+  return(list(Xin = Xin, Yin = Yin, Xout = Xout, df_final = cbind(df_trimmed, y_art)))
 }
