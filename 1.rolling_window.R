@@ -1,28 +1,21 @@
-rolling_window <- function(df, target_var, ART, horizon=1, lags=0, fnct){
+rolling_window <- function(df, target_var, ART, horizon = 1, n_predicts = 20, fnct) {
   
-  prep_data <- dataprep(df, target_var, ART, horizon)
+  previsoes <- vector("list", n_predicts)                              #cria uma lista vazia de tamanho n_predicts
   
-  if( lags == 0 ){
-    df_final = prep_data$df_final
-  }else{
-    df_final = prep_data$df_final[1:lags,]
+  for (i in 0:(n_predicts - 1)) {
+    
+    
+    df_window <- df[(1 + i):(nrow(df) - n_predicts + i + horizon), ]
+    
+    
+    resultado <- fnct(df_window, target_var, ART, horizon)
+    
+    
+    previsoes[[i + 1]] <- resultado[[1]] 
+    
+    
   }
   
-
-  number_window <- nrow(df) - Xin
-  
-  indmat <- matrix(NA, number_window,window_size)     # cada coluna representa um indice de df dentro da janela
-  indmat[1,]=1:ncol(indmat)  
-  
-  for(i in 2:nrow(indmat)){                           # cada linha é uma janela de observação dos devidos indices
-    indmat[i,]=indmat[i-1,]+1
-  }
-  
-  rw=apply(indmat,1, fnct, df)
-  
-  yin  <- prep_data$Yin
-  Xin  <- prep_data$Xin
-  Xout <- prep_data$Xout
-  df_final <- prep_data$df_final
-  
+    
+  return(previsoes)
 }
