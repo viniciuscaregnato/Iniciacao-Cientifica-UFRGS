@@ -17,5 +17,7 @@ rolling_window <- function(df, target_var, ART, horizon = 1, n_predicts = 20, fn
   }
   
     
+  
+  
   return(previsoes)
 }
