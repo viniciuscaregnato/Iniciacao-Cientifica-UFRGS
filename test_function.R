@@ -1,7 +1,7 @@
-regressao_linear <- function(df_window, target_var, ART, horizon =1){
+regressao_linear <- function(df_window, target_var, ART, horizon){
   
   
-  prep_data <- dataprep(df_window, target_var, ART)
+  prep_data <- dataprep(df_window, target_var, ART, horizon)
   
   yin  <- prep_data$Yin
   Xin  <- prep_data$Xin
