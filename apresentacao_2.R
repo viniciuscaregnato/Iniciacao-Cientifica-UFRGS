@@ -74,6 +74,14 @@ View(Yin)
 data_in <- cbind(Yin,Xin)
 View(data_in)
 
-#### Aplicando a função ####
+#### Aplicando a função de regressao ####
 modelo <- lm(Yin ~ ., data = data_in)
 previsao <- predict(modelo, newdata=Xout)
+
+#### Aplicando a função de random forest ####
+Xin <- data_in[, setdiff(names(data_in), "Yin")]
+View(Yin)
+Yin <- data_in[,1]
+View(Yin)
+modelo <- randomForest(x = Xin, y = Yin)
+previsao <- predict(modelo, newdata = Xout)
