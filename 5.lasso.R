@@ -1,4 +1,4 @@
-LASSO <- function(df, target_var, ART, horizon, alpha = 1){
+lasso <- function(df, target_var, ART, horizon, alpha = 1){
   
   require(glmnet)
   
