@@ -46,5 +46,5 @@ dataprep <- function(df_window, target_var, ART, horizon) {
   
   
   
-  return(list(Xout = Xout, data_in = data_in))
+  return(list(Xout = Xout, Xin =  Xin, Yin = Yin, data_in = data_in))
 }
