@@ -1,4 +1,4 @@
-RIDGE <- function(df, target_var, ART, horizon, alpha = 0){
+ridge <- function(df, target_var, ART, horizon, alpha = 0){
   
   require(glmnet)
   
